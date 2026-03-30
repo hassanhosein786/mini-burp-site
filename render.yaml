@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: mini-burp-suite-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: REQUEST_TIMEOUT_MS
+        value: 10000
+      - key: USER_AGENT
+        value: MiniBurpSuite/1.0 (Authorized Defensive Testing Only)
+
+  - type: web
+    name: mini-burp-suite-web
+    runtime: static
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false

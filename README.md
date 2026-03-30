@@ -70,6 +70,51 @@ Backend: `http://localhost:5000`
 - The repo `.gitignore` already excludes `.env`, so your local secrets should not be committed.
 - Before pushing changes, double-check that you did not add API keys, passwords, tokens, or production database URIs to tracked files.
 
+## Deployment guidance
+
+This project can be deployed, but the live scanning backend should not be exposed publicly without access controls. A safe default is:
+
+- Public: deploy the frontend only as a portfolio/demo interface
+- Private or restricted: deploy the Node/Express scanner backend
+- Managed database: use MongoDB Atlas
+
+Recommended stack:
+
+- Frontend: Vercel or Render static hosting
+- Backend: Render web service
+- Database: MongoDB Atlas
+
+### Important deployment note
+
+The frontend now reads its API URL from `VITE_API_BASE_URL`, which lets you point production builds at a deployed backend instead of local `http://localhost:5000/api`.
+
+### Frontend on Vercel
+
+- Import the GitHub repo into Vercel
+- Set the project root to `client`
+- Set `VITE_API_BASE_URL` to your deployed backend URL, for example `https://your-api.onrender.com/api`
+- The included `vercel.json` enables SPA route rewrites so direct links keep working
+
+### Full-stack on Render
+
+- The included `render.yaml` defines:
+- `mini-burp-suite-api` for the Express backend
+- `mini-burp-suite-web` for the static frontend
+- Set `MONGODB_URI` to your Atlas connection string
+- Set `CLIENT_ORIGIN` on the backend to your deployed frontend URL
+- Set `VITE_API_BASE_URL` on the frontend to your deployed backend URL plus `/api`
+
+### MongoDB Atlas
+
+- Create an Atlas cluster
+- Add your deployment platform's outbound IPs or use Atlas network rules appropriate for your setup
+- Create a database user
+- Use the Atlas connection string as `MONGODB_URI`
+
+### Best practice
+
+For a public portfolio, prefer deploying a demo frontend or protecting the backend behind authentication before exposing live scan functionality.
+
 ## Future improvements
 
 - Job queue and worker separation
